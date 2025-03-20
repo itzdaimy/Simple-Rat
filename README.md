@@ -18,7 +18,29 @@ A **simple, yet powerful Remote Access Tool (RAT)** written in **C#** that enabl
 
 ```plaintext
 Simple-RAT/
-├── client.cs # Main logic for RAT client
-├── server.cs # Main logic for RAT server
+├── client.cs            # Main logic for RAT client
+├── server.cs            # Main logic for RAT server
 ├── logs.txt             # Keystroke logs (created on the server)
 ├── README.md            # Project documentation
+```
+
+## **📜 Example Logs**
+
+When the victim types something like this: my password is 123
+
+The **logs.txt** on the attacker's machine will look like this: 
+```plaintext
+my password is 123 [ENTER]
+```
+
+---
+
+## **⚠️ Warning**
+
+This project is for **educational purposes only**. It is essential to understand how remote access tools work so that you can protect your own systems and networks. **Do not use this tool on machines you don't own or have explicit permission to test**.
+
+Using this tool without permission is illegal and unethical. Always follow **ethical hacking** principles and ensure that you're testing only on machines that you have permission to access or on your own devices.
+
+---
+
+Please be responsible and use this knowledge to improve security and learn more about the techniques used by attackers and defenders.
