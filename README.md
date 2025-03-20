@@ -18,10 +18,6 @@ A **simple, yet powerful Remote Access Tool (RAT)** written in **C#** that enabl
 
 ```plaintext
 Simple-RAT/
-<!--├── RATClient/           # Client-side (attacked machine)
-│   ├── Program.cs       # Main logic for the RAT client
-├── RATServer/           # Server-side (attacker machine)
-│   ├── Program.cs       # Main logic for the RAT server-->>
 ├── client.cs # Main logic for RAT client
 ├── server.cs # Main logic for RAT server
 ├── logs.txt             # Keystroke logs (created on the server)
