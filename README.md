@@ -1,7 +1,7 @@
 # **Simple RAT (Remote Access Tool)**
 
 A **simple, yet powerful Remote Access Tool (RAT)** written in **C#** that enables remote control of a system. This tool allows attackers to execute commands, capture keystrokes in real-time, and retrieve system information from the target machine. The project is designed to educate users about the inner workings of RATs and help them understand how to prevent such attacks.
-
+for support you may contact me on discord, my username is daimyh
 ---
 
 ## **🚀 Features**
