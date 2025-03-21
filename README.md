@@ -10,8 +10,9 @@ for support you may contact me on discord, my username is daimyh
 - **💻 System Information Gathering**: Retrieve detailed information about the victim's machine, including OS, CPU, RAM, and more.
 - **⚡ Remote Command Execution**: Execute commands on the victim machine remotely via a **simple command shell**.
 - **📜 Logs**: All captured keystrokes are logged and stored in a **beautiful text file** for easy tracking.
+- **🖼️ Screenshot Capture**: Take screenshots of the victim's desktop and save them on the attacker's machine.
+- **👥 Multi-Client Support**: Support for multiple clients connected to the server simultaneously, allowing control of multiple victim machines.
 - **🔐 Secure Communication**: Communication between the client (victim) and server (attacker) happens over TCP.
-
 ---
 
 ## **📂 Project Structure**
