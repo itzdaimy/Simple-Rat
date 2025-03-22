@@ -21,7 +21,9 @@ for support you may contact me on discord, my username is daimyh
 Simple-RAT/
 ├── client.cs            # Main logic for RAT client
 ├── server.cs            # Main logic for RAT server
-├── logs.txt             # Keystroke logs (created on the server)
+├── logs/
+│   └── keylog.txt       # Keystroke logs (created on the server)
+├── screenshots/         # Directory to store captured screenshots
 ├── README.md            # Project documentation
 ```
 
