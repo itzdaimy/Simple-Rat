@@ -13,6 +13,7 @@ for support you may contact me on discord, my username is daimyh
 - **🖼️ Screenshot Capture**: Take screenshots of the victim's desktop and save them on the attacker's machine.
 - **👥 Multi-Client Support**: Support for multiple clients connected to the server simultaneously, allowing control of multiple victim machines.
 - **🔐 Secure Communication**: Communication between the client (victim) and server (attacker) happens over TCP.
+- **🦠 Undetected**: This RAT has always been undetected, it works with real time protection on, and doesnt flag if you do a scan. 
 ---
 
 ## **📂 Project Structure**
