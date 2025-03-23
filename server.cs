@@ -175,7 +175,7 @@ class ClientHandler
                 }
                 else
                 {
-                    // Console.WriteLine($"[Client {ClientID}] {line}");
+                    Console.WriteLine($"[Client {ClientID}] {line}");
                 }
             }
         }
