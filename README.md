@@ -42,6 +42,15 @@ my password is 123 [ENTER]
 
 ---
 
+## **💻 Build into exe**
+
+1. Put both the client.cs and server.cs into 1 folder
+2. Open up cmd in the folder.
+3. type "dotnet new console -n server" and "dotnet new console -n client"
+4. then put your cmd in each folders it created and run "dotnet publish -c Release -r win-x64 --self-contained"
+5. done!
+
+
 ## **⚠️ Warning**
 
 This project is for **educational purposes only**. It is essential to understand how remote access tools work so that you can protect your own systems and networks. **Do not use this tool on machines you don't own or have explicit permission to test**.
