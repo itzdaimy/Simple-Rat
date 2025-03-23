@@ -4,6 +4,8 @@ A **simple, yet powerful Remote Access Tool (RAT)** written in **C#** that enabl
 for support you may contact me on discord, my username is daimyh
 ---
 
+## ⚠️⚠️SINCE V1.0.4 WINDOWS HAS DETECTED IT AS A VIRUS. STAND BY FOR UPDATES
+
 ## **🚀 Features**
 
 - **🔑 Keylogger**: Capture every keystroke typed on the victim machine and save it to a file on the attacker's machine in **real-time**.
