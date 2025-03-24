@@ -49,7 +49,7 @@ my password is 123 [ENTER]
 1. Put both the client.cs and server.cs into 1 folder
 2. Open up cmd in the folder.
 3. type "dotnet new console -n server" and "dotnet new console -n client"
-4. then put your cmd in each folders it created and run "dotnet publish -c Release -r win-x64 --self-contained" OR you can use "dotnet publish -c Release -r win-x64 --self-contained" (user must have .net installed)
+4. then put your cmd in each folders it created and run "dotnet publish -c Release -r win-x64 --self-contained" OR you can use "dotnet publish -c Release -r win-x64 --self-contained false" (user must have .net installed)
 5. done!
 
 
