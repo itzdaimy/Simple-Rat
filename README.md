@@ -19,6 +19,7 @@ for support you may contact me on discord, my username is daimyh
    	*Undetected*: The RAT hides its console window and detaches from it so no taskbar icon is visible.
    	*Persistence*  Automatically copies itself to the AppData folder and adds a registry key to run at startup.
 - **🔄 Auto-Reconnect**: If the connection to the server fails, it will retry every 2 minutes.
+- **💥 Flash**: Flash the victim! Make there screen turn white! 
 ---
 
 ## **📂 Project Structure**
