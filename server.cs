@@ -1,3 +1,5 @@
+// there are a couple of debugging lines commented out. you can uncomment them
+
 using System;
 using System.Collections.Generic;
 using System.IO;
