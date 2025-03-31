@@ -33,6 +33,7 @@ Simple-RAT/
 ├── logs/
 │   └── keylog.txt       # Keystroke logs (created on the server)
 ├── screenshots/         # Directory to store captured screenshots
+│   └── Screenshot.png    # Created on the server
 ├── README.md            # Project documentation
 ```
 
