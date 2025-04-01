@@ -56,6 +56,7 @@ my password is 123 [ENTER]
 4. then put your cmd in each folders it created and run "dotnet publish -c Release -r win-x64 --self-contained" OR you can use "dotnet publish -c Release -r win-x64 --self-contained false" (user must have .net installed)
 5. done!
 
+# NOTE **THE PROGAM.CS IN FOLDER SERVER AND CLIENT MUST BE THE SAME AS CLIENT.CS OR SERVER.CS**
 
 ## **⚠️ Warning**
 
