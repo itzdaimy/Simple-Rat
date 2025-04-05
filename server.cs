@@ -1,4 +1,4 @@
-// made by daimy
+// made by daimy, dc: daimyh
 // there are a couple of debugging lines commented out. you can uncomment them
 
 using System;
