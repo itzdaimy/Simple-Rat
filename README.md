@@ -4,7 +4,7 @@ A **simple, yet powerful Remote Access Tool (RAT)** written in **C#** that enabl
 for support you may contact me on discord, my username is daimyh
 ---
 
-Getting updates soon. 
+Getting updates soon. (whenever i get time)
 
 **🦠 [Virus total](https://www.virustotal.com/gui/file/68938329576be32f84babff5afb770dac8cc3b13e2e5e114a3ec13b0bba8771f/detection)**
 
